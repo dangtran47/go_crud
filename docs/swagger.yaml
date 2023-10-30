@@ -1,14 +1,4 @@
 definitions:
-  controllers.ErrorResponse:
-    properties:
-      error:
-        type: string
-    type: object
-  controllers.SuccessResponse:
-    properties:
-      message:
-        type: string
-    type: object
   models.SignUp:
     properties:
       email:
@@ -29,6 +19,16 @@ definitions:
     - password
     - password_confirmation
     - photo
+    type: object
+  utils.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  utils.SuccessResponse:
+    properties:
+      message:
+        type: string
     type: object
 info:
   contact: {}
@@ -52,11 +52,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controllers.SuccessResponse'
+            $ref: '#/definitions/utils.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controllers.ErrorResponse'
+            $ref: '#/definitions/utils.ErrorResponse'
       summary: Sign up
       tags:
       - Auth

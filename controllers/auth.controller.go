@@ -16,14 +16,6 @@ type AuthController struct {
 	DB *gorm.DB
 }
 
-type SuccessResponse struct {
-	Message string `json:"message"`
-}
-
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
 func NewAuthController(db *gorm.DB) AuthController {
 	return AuthController{DB: db}
 }
@@ -36,8 +28,8 @@ func NewAuthController(db *gorm.DB) AuthController {
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		models.SignUp	true	"Sign up payload"
-//	@Success		200		{object}	SuccessResponse
-//	@Failure		400		{object}	ErrorResponse
+//	@Success		200		{object}	utils.SuccessResponse
+//	@Failure		400		{object}	utils.ErrorResponse
 //	@Router			/api/auth/signup [post]
 func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 	var payload *models.SignUp
