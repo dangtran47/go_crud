@@ -50,7 +50,6 @@ func ValidateToken(token string, publicKey string) (interface{}, error) {
 		return key, nil
 	})
 
-	fmt.Println("claims", claims)
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse token: %w", err)
 	}

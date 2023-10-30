@@ -62,17 +62,10 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 		return
 	}
 
-	userResponse := models.UserResponse{
-		ID:        newUser.ID,
-		Name:      newUser.Name,
-		Email:     newUser.Email,
-		Role:      newUser.Role,
-		Photo:     newUser.Photo,
-		Provider:  newUser.Provider,
-		CreatedAt: newUser.CreatedAt,
-		UpdatedAt: newUser.UpdatedAt,
-	}
-	ctx.JSON(http.StatusCreated, gin.H{"data": userResponse})
+	utils.SendVerificationEmail(&newUser)
+
+	message := "An email has been sent to " + newUser.Email + " with verification code."
+	ctx.JSON(http.StatusOK, gin.H{"message": message})
 }
 
 func (ac *AuthController) SignInUser(ctx *gin.Context) {
@@ -88,8 +81,16 @@ func (ac *AuthController) SignInUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "invalid email or password"})
 		return
 	}
+
 	if err := utils.VerifyPassword(user.Password, payload.Password); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid email or password"})
+		return
+	}
+
+	if !user.Verified {
+		utils.SendVerificationEmail(&user)
+
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "please verify your email"})
 		return
 	}
 
@@ -156,4 +157,25 @@ func (ac *AuthController) SignOut(ctx *gin.Context) {
 	ctx.SetCookie("logged_in", "", -1, "/", "localhost", false, true)
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "logged out successfully"})
+}
+
+func (ac *AuthController) VerifyEmail(ctx *gin.Context) {
+	code := ctx.Param("code")
+	verificationCode := utils.Encode(code)
+
+	var user models.User
+	result := ac.DB.First(&user, "verification_code = ?", verificationCode)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid verification code"})
+	}
+
+	if user.Verified {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "email already verified"})
+	}
+
+	user.VerificationCode = ""
+	user.Verified = true
+	ac.DB.Save(user)
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "email verified successfully"})
 }
