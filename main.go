@@ -5,10 +5,13 @@ import (
 	"net/http"
 
 	"github.com/dangtran47/go_crud/controllers"
+	_ "github.com/dangtran47/go_crud/docs"
 	"github.com/dangtran47/go_crud/initializers"
 	"github.com/dangtran47/go_crud/routes"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 var (
@@ -43,6 +46,7 @@ func main() {
 	corsConfig.AllowCredentials = true
 
 	server.Use(cors.New(corsConfig))
+	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	router := server.Group("/api")
 	router.GET("/healthchecker", func(ctx *gin.Context) {

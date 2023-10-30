@@ -1,0 +1,63 @@
+definitions:
+  controllers.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  controllers.SuccessResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  models.SignUp:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      password_confirmation:
+        minLength: 8
+        type: string
+      photo:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - password_confirmation
+    - photo
+    type: object
+info:
+  contact: {}
+paths:
+  /api/auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Sign up a new user given email, name, password, password confirmation,
+        and photo
+      parameters:
+      - description: Sign up payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignUp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      summary: Sign up
+      tags:
+      - Auth
+swagger: "2.0"

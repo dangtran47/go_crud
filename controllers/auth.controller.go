@@ -16,10 +16,29 @@ type AuthController struct {
 	DB *gorm.DB
 }
 
+type SuccessResponse struct {
+	Message string `json:"message"`
+}
+
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 func NewAuthController(db *gorm.DB) AuthController {
 	return AuthController{DB: db}
 }
 
+// SignUpUser godoc
+//
+//	@Summary		Sign up
+//	@Description	Sign up a new user given email, name, password, password confirmation, and photo
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			payload	body		models.SignUp	true	"Sign up payload"
+//	@Success		200		{object}	SuccessResponse
+//	@Failure		400		{object}	ErrorResponse
+//	@Router			/api/auth/signup [post]
 func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 	var payload *models.SignUp
 
