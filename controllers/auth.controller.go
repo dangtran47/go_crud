@@ -190,3 +190,52 @@ func (ac *AuthController) VerifyEmail(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "email verified successfully"})
 }
+
+func (ac *AuthController) ForgotPassword(ctx *gin.Context) {
+	var payload *models.ForgotPasswordInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var user models.User
+	result := ac.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
+	if result.Error == nil {
+		utils.SendResetPasswordEmail(&user)
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "You will receive a reset password email if user with that email exists."})
+}
+
+func (ac *AuthController) ResetPassword(ctx *gin.Context) {
+	var payload *models.ResetPasswordInput
+	resetCode := ctx.Param("resetCode")
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if payload.Password != payload.PasswordConfirmation {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "password and password confirmation does not match"})
+		return
+	}
+
+	hashedPassword, _ := utils.HashPassword(payload.Password)
+	passwordResetCode := utils.Encode(resetCode)
+
+	var user models.User
+	result := ac.DB.First(&user, "password_reset_code = ? AND password_reset_at > ?", passwordResetCode, time.Now().UTC())
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid reset code"})
+		return
+	}
+
+	user.Password = hashedPassword
+	user.PasswordResetCode = ""
+	user.Verified = true
+
+	ac.DB.Save(&user)
+	ctx.JSON(http.StatusOK, gin.H{"message": "password reset successfully"})
+}

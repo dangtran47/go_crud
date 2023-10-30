@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/dangtran47/go_crud/initializers"
 	"github.com/dangtran47/go_crud/models"
@@ -100,6 +101,29 @@ func SendVerificationEmail(user *models.User) {
 	}
 
 	user.VerificationCode = verificationCode
+	initializers.DB.Save(user)
+	SendMail(user, &emailData)
+}
+
+func SendResetPasswordEmail(user *models.User) {
+	config, _ := initializers.LoadConfig(".")
+
+	code := randstr.String(6)
+	resetPasswordCode := Encode(code)
+
+	firstName := user.Name
+	if strings.Contains(user.Name, " ") {
+		firstName = strings.Split(user.Name, " ")[0]
+	}
+
+	emailData := EmailData{
+		URL:       config.ClientOrigin + "/reset_password/" + code,
+		FirstName: firstName,
+		Subject:   "Your reset password code",
+	}
+
+	user.PasswordResetCode = resetPasswordCode
+	user.PasswordResetAt = time.Now().Add(time.Minute * 15).UTC()
 	initializers.DB.Save(user)
 	SendMail(user, &emailData)
 }

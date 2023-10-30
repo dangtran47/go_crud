@@ -5,17 +5,19 @@ import (
 )
 
 type User struct {
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
-	Name             string `gorm:"type:varchar(255);not null"`
-	Email            string `gorm:"uniqueIndex; not null"`
-	Password         string `gorm:"not null"`
-	Role             string `gorm:"not null"`
-	Provider         string `gorm:"not null"`
-	Photo            string `gorm:"not null"`
-	VerificationCode string
-	ID               uint `gorm:"primary_key"`
-	Verified         bool `gorm:"not null"`
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
+	Name              string `gorm:"type:varchar(255);not null"`
+	Email             string `gorm:"uniqueIndex; not null"`
+	Password          string `gorm:"not null"`
+	Role              string `gorm:"not null"`
+	Provider          string `gorm:"not null"`
+	Photo             string `gorm:"not null"`
+	VerificationCode  string
+	PasswordResetCode string
+	PasswordResetAt   time.Time
+	ID                uint `gorm:"primary_key"`
+	Verified          bool `gorm:"not null"`
 }
 
 type SignUp struct {
@@ -40,4 +42,13 @@ type UserResponse struct {
 	Photo     string    `json:"photo"`
 	Provider  string    `json:"provider"`
 	ID        uint      `json:"id"`
+}
+
+type ForgotPasswordInput struct {
+	Email string `json:"email" binding:"required"`
+}
+
+type ResetPasswordInput struct {
+	Password             string `json:"password" binding:"required,min=8"`
+	PasswordConfirmation string `json:"password_confirmation" binding:"required,min=8"`
 }
