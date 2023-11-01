@@ -7,17 +7,17 @@ import (
 type User struct {
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
-	Name              string `gorm:"type:varchar(255);not null"`
-	Email             string `gorm:"uniqueIndex; not null"`
+	PasswordResetAt   time.Time
+	Provider          string `gorm:"not null"`
 	Password          string `gorm:"not null"`
 	Role              string `gorm:"not null"`
-	Provider          string `gorm:"not null"`
+	Email             string `gorm:"uniqueIndex; not null"`
 	Photo             string `gorm:"not null"`
 	VerificationCode  string
 	PasswordResetCode string
-	PasswordResetAt   time.Time
-	ID                uint `gorm:"primary_key"`
-	Verified          bool `gorm:"not null"`
+	Name              string `gorm:"type:varchar(255);not null"`
+	ID                uint   `gorm:"primary_key"`
+	Verified          bool   `gorm:"not null"`
 }
 
 type SignUp struct {

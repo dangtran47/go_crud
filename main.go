@@ -22,6 +22,9 @@ var (
 
 	UserController      controllers.UserController
 	UserRouteController routes.UserRouteController
+
+	PostController      controllers.PostController
+	PostRouteController routes.PostRouteController
 )
 
 func init() {
@@ -61,6 +64,10 @@ func main() {
 	UserController := controllers.NewUserController(initializers.DB)
 	UserRouteController := routes.NewUserRouteController(UserController)
 	UserRouteController.UserRoute(router)
+
+	PostController := controllers.NewPostController(initializers.DB)
+	PostRouteController := routes.NewPostRouteController(PostController)
+	PostRouteController.PostRoute(router)
 
 	log.Fatal(server.Run(":" + config.ServerPort))
 }

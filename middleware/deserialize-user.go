@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -25,8 +24,6 @@ func DeserializeUser() gin.HandlerFunc {
 			accessToken = cookie
 		}
 
-		fmt.Println("accessToken", accessToken)
-
 		if accessToken == "" {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			return
@@ -46,7 +43,7 @@ func DeserializeUser() gin.HandlerFunc {
 			return
 		}
 
-		ctx.Set("current_user", user)
+		ctx.Set("currentUser", user)
 		ctx.Next()
 	}
 }
