@@ -32,3 +32,13 @@ type PostResponse struct {
 	ID        uint      `json:"id"`
 	AuthorID  uint      `json:"author_id"`
 }
+
+func (p *Post) ToResponse() PostResponse {
+	return PostResponse{
+		ID:        p.ID,
+		Title:     p.Title,
+		Content:   p.Content,
+		CreatedAt: p.CreatedAt,
+		UpdatedAt: p.UpdatedAt,
+	}
+}

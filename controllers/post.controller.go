@@ -48,14 +48,7 @@ func (pc *PostController) CreatePost(ctx *gin.Context) {
 		return
 	}
 
-	postReponse := models.PostResponse{
-		ID:        newPost.ID,
-		Title:     newPost.Title,
-		Content:   newPost.Content,
-		CreatedAt: newPost.CreatedAt,
-		UpdatedAt: newPost.UpdatedAt,
-	}
-
+	postReponse := newPost.ToResponse()
 	ctx.JSON(http.StatusCreated, gin.H{"data": postReponse})
 }
 
@@ -82,13 +75,7 @@ func (pc *PostController) UpdatePost(ctx *gin.Context) {
 
 	pc.DB.Save(updatedPost)
 
-	postReponse := models.PostResponse{
-		ID:        updatedPost.ID,
-		Title:     updatedPost.Title,
-		Content:   updatedPost.Content,
-		CreatedAt: updatedPost.CreatedAt,
-		UpdatedAt: updatedPost.UpdatedAt,
-	}
+	postReponse := updatedPost.ToResponse()
 
 	ctx.JSON(http.StatusOK, gin.H{"data": postReponse})
 }
@@ -104,13 +91,7 @@ func (pc *PostController) GetPost(ctx *gin.Context) {
 		return
 	}
 
-	postReponse := models.PostResponse{
-		ID:        post.ID,
-		Title:     post.Title,
-		Content:   post.Content,
-		CreatedAt: post.CreatedAt,
-		UpdatedAt: post.UpdatedAt,
-	}
+	postReponse := post.ToResponse()
 
 	ctx.JSON(http.StatusOK, gin.H{"data": postReponse})
 }
@@ -130,13 +111,7 @@ func (pc *PostController) GetAllPosts(ctx *gin.Context) {
 
 	postResponses := make([]models.PostResponse, len(posts))
 	for i, post := range posts {
-		postResponses[i] = models.PostResponse{
-			ID:        post.ID,
-			Title:     post.Title,
-			Content:   post.Content,
-			CreatedAt: post.CreatedAt,
-			UpdatedAt: post.UpdatedAt,
-		}
+		postResponses[i] = post.ToResponse()
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"data": postResponses})
