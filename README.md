@@ -1,5 +1,8 @@
 # Simple Go CRUD
 
+A simple project to learn Go.
+Tech stack: Gin, Gorm, Postgres, Docker, Swagger
+
 ## Local development
 
 ```bash
